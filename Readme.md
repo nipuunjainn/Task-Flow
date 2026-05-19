@@ -1,98 +1,111 @@
-# 🚀 Team Task Manager (Full Stack)
+# ⚡ Task Flow (Full Stack)
 
-A production-ready full-stack web application to manage team projects, assign tasks, and track progress with role-based access control.
-
----
-
-## 🌐 Live Demo
-https://team-task-manager-beta-opal.vercel.app/
+A modern, highly-polished full-stack task and workspace management application with a premium glassmorphic dark/light UI, designed to organize team projects, assign work, and track real-time progress.
 
 ---
 
-## 🧠 Problem Statement
+## 🎨 Premium Visual Overhaul & Redesign
 
-Managing team tasks across multiple projects can become chaotic without proper structure, access control, and tracking.  
-This application solves that by providing a centralized system with **Admin and Member roles**, ensuring secure and efficient collaboration.
+Task Flow has been completely redesigned with a custom **"Dark Luxe"** design system to stand out as a modern, distinct application:
+- **Responsive Layout**: Transitioned from a generic sidebar layout to a sleek top-navbar (desktop) and a compact tab navigation (mobile).
+- **Glassmorphism**: Elegant semi-translucent cards, blur backdrops, harmony-tailored colors, and smooth hover micro-animations.
+- **Dynamic Theming**: Integrated system preferences and a manual toggle for seamless Light and Dark mode transitions.
+- **Simplified Terminology**: Rebranded **Projects** as **Workspaces** and **Tasks** as **Assignments** for a cleaner UX.
+- **Status Workflows**: Updated task statuses to modern labels: `Queued`, `Working`, `Review`, and `Finished`.
+- **Role Selector**: Integrated a dual-card account type selector during Sign-Up (Admin vs. Member accounts) with customized registration endpoints.
 
 ---
 
 ## ⚙️ Tech Stack
 
 ### Frontend
-- React.js (Vite)
-- Tailwind CSS
-- Axios
-- React Router DOM
-- React Hook Form + Zod
-- Recharts (for analytics)
+- **React.js** (Vite)
+- **Tailwind CSS** (Custom Extended Utilities)
+- **Axios** (API connection client)
+- **React Router DOM**
+- **React Hook Form + Zod**
+- **Lucide React Icons**
+- **Recharts** (Custom dashboard data visualization)
 
 ### Backend
-- Node.js
-- Express.js
-- PostgreSQL
-- Prisma ORM
+- **Node.js**
+- **Express.js**
+- **PostgreSQL** (Production database)
+- **Prisma ORM** (Database client)
 
-### Authentication
-- JWT (JSON Web Token)
-- Google OAuth
-- bcrypt (password hashing)
-
-### Deployment
-- Backend: Railway
-- Frontend: Vercel
+### Security & Authentication
+- **JWT (JSON Web Token)**
+- **Google OAuth Integration**
+- **bcrypt** (Secure password hashing)
 
 ---
 
-## 🔐 Features
+## 🔐 Features & Architecture
 
-### 👤 Authentication
-- User registration & login
-- Google OAuth login
-- Secure password hashing
-- JWT-based authentication
+### 👤 User Registration & Roles
+- **Dual-Card Signup**: Choose to join as a **Member** (view & update tasks) or an **Admin** (full workspace and team control).
+- **Secure Sessions**: Single-card minimal login layout with password verification and Google login prioritization.
 
----
+### 📁 Workspace Management
+- Create workspaces with:
+  - Custom names and details
+  - Start & Deadline dates
+  - Interactive member invite/team association modal
 
-### 🛠️ Role-Based Access Control (RBAC)
-
-#### 🔹 Admin
-- Create, update, delete projects
-- Add/remove project members
-- Assign tasks
-- View all project tasks and analytics
-
-#### 🔹 Member
-- View assigned tasks
-- Update task status
-- Track deadlines
+### ✅ Assignment Tracking
+- Group assignments by workspace
+- Assign tasks to team members with customizable Urgency (`Low`, `Medium`, `High`) and Status.
 
 ---
 
-### 📁 Project Management
-- Create projects with:
-  - Name
-  - Description
-  - Start & Due dates
-- Add multiple members to projects
+## 🚀 Getting Started
 
----
+### Prerequisites
+- Node.js (v18+)
+- npm
 
-### ✅ Task Management
-- Create tasks under projects
-- Assign tasks to members
-- Task fields:
-  - Title
-  - Description
-  - Priority (Low, Medium, High)
-  - Status (To Do, In Progress, Review, Completed)
-  - Due date
+### 1. Backend Setup
+1. Navigate to the `backend` folder:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in `.env`:
+   ```env
+   PORT=5000
+   DATABASE_URL="YOUR_POSTGRESQL_CONNECTION_STRING"
+   JWT_SECRET="YOUR_JWT_SECRET"
+   FRONTEND_URL="http://localhost:5173"
+   GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
+   ```
+4. Push database schema and run seed:
+   ```bash
+   npx prisma db push
+   npm run seed
+   ```
+5. Start the server:
+   ```bash
+   npm start
+   ```
 
----
-
-### 📊 Dashboard Analytics
-- Total projects
-- Completed tasks
-- Pending tasks
-- Overdue tasks
-
----
+### 2. Frontend Setup
+1. Navigate to the `frontend` folder:
+   ```bash
+   cd ../frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in `.env`:
+   ```env
+   VITE_API_URL="http://localhost:5000/api"
+   VITE_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
