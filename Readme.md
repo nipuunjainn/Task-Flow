@@ -2,6 +2,10 @@
 
 A modern, highly-polished full-stack task and workspace management application with a premium glassmorphic dark/light UI, designed to organize team projects, assign work, and track real-time progress.
 
+### 🌐 Live Deployment
+- **Frontend (Vercel)**: [https://task-flow-iota-seven.vercel.app](https://task-flow-iota-seven.vercel.app)
+- **Backend API (Railway)**: [https://task-flow-production-5991.up.railway.app](https://task-flow-production-5991.up.railway.app)
+
 ---
 
 ## 🎨 Premium Visual Overhaul & Redesign
