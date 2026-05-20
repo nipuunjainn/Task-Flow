@@ -17,6 +17,8 @@ export default function Projects() {
   const [form, setForm] = useState(emptyForm);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  const [modalError, setModalError] = useState('');
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -44,24 +46,38 @@ export default function Projects() {
 
   const createProject = async (e) => {
     e.preventDefault();
-    await API.post('/projects', form);
-    setShowCreate(false);
-    setForm(emptyForm);
-    loadData();
+    setModalError('');
+    try {
+      await API.post('/projects', form);
+      setShowCreate(false);
+      setForm(emptyForm);
+      loadData();
+    } catch (err) {
+      setModalError(err.response?.data?.error || 'Failed to create workspace');
+    }
   };
 
   const deleteProject = async (id) => {
     if (!window.confirm('Remove this workspace and all its data?')) return;
-    await API.delete(`/projects/${id}`);
-    loadData();
+    try {
+      await API.delete(`/projects/${id}`);
+      loadData();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to delete workspace');
+    }
   };
 
   const addMember = async () => {
     if (!selectedProject || !memberToAdd) return;
-    await API.post(`/projects/${selectedProject.id}/members`, { userId: Number(memberToAdd) });
-    setMemberToAdd('');
-    setShowManage(false);
-    loadData();
+    setModalError('');
+    try {
+      await API.post(`/projects/${selectedProject.id}/members`, { userId: Number(memberToAdd) });
+      setMemberToAdd('');
+      setShowManage(false);
+      loadData();
+    } catch (err) {
+      setModalError(err.response?.data?.error || 'Failed to add member to team');
+    }
   };
 
   if (loading) {
@@ -163,8 +179,11 @@ export default function Projects() {
 
       {/* ── Create Modal ── */}
       {showCreate && (
-        <Modal title="New workspace" onClose={() => setShowCreate(false)}>
+        <Modal title="New workspace" onClose={() => { setShowCreate(false); setModalError(''); }}>
           <form onSubmit={createProject} className="space-y-4">
+            {modalError && (
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs text-red-500">{modalError}</div>
+            )}
             <FormInput label="Workspace name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="e.g. Marketing Q3" />
             <FormTextarea label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} placeholder="What is this workspace about?" />
             <div className="grid gap-4 sm:grid-cols-2">
@@ -178,8 +197,11 @@ export default function Projects() {
 
       {/* ── Manage Members Modal ── */}
       {showManage && selectedProject && (
-        <Modal title={`Team — ${selectedProject.name}`} onClose={() => setShowManage(false)}>
+        <Modal title={`Team — ${selectedProject.name}`} onClose={() => { setShowManage(false); setModalError(''); }}>
           <div className="space-y-5">
+            {modalError && (
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs text-red-500">{modalError}</div>
+            )}
             {user.role === 'ADMIN' && (
               <div className="rounded-xl bg-[var(--surface-overlay)] p-4">
                 <label className="block text-xs font-semibold text-secondary mb-2 uppercase tracking-wider">Add a team member</label>

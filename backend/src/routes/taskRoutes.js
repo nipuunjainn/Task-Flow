@@ -17,8 +17,14 @@ const taskSchema = z.object({
 
 // 🔒 Helpers
 async function ensureProjectOwnedByAdmin(projectId, userId) {
-  const project = await prisma.project.findUnique({ where: { id: projectId } });
-  if (!project || project.createdById !== userId) return null;
+  const project = await prisma.project.findUnique({ 
+    where: { id: projectId },
+    include: { members: true }
+  });
+  if (!project) return null;
+  const isCreator = project.createdById === userId;
+  const isMember = project.members.some(m => m.userId === userId);
+  if (!isCreator && !isMember) return null;
   return project;
 }
 
@@ -34,7 +40,12 @@ router.get('/', verifyToken, async (req, res) => {
   try {
     const where =
       req.user.role === 'ADMIN'
-        ? { project: { createdById: req.user.userId } }
+        ? {
+            OR: [
+              { project: { createdById: req.user.userId } },
+              { project: { members: { some: { userId: req.user.userId } } } }
+            ]
+          }
         : { assignedTo: req.user.userId };
 
     const tasks = await prisma.task.findMany({
@@ -122,7 +133,8 @@ router.put('/:id', verifyToken, authorizeRoles('ADMIN'), async (req, res) => {
 
     if (!task) return res.status(404).json({ error: 'Task not found' });
 
-    if (task.project.createdById !== req.user.userId) {
+    const validAdmin = await ensureProjectOwnedByAdmin(task.projectId, req.user.userId);
+    if (!validAdmin) {
       return res.status(403).json({ error: 'Not allowed' });
     }
 
@@ -184,8 +196,11 @@ router.put('/:id/status', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Not your task' });
     }
 
-    if (req.user.role === 'ADMIN' && task.project.createdById !== req.user.userId) {
-      return res.status(403).json({ error: 'Not your project' });
+    if (req.user.role === 'ADMIN') {
+      const validAdmin = await ensureProjectOwnedByAdmin(task.projectId, req.user.userId);
+      if (!validAdmin) {
+        return res.status(403).json({ error: 'Not your project' });
+      }
     }
 
     const updated = await prisma.task.update({
@@ -213,7 +228,8 @@ router.delete('/:id', verifyToken, authorizeRoles('ADMIN'), async (req, res) => 
 
     if (!task) return res.status(404).json({ error: 'Task not found' });
 
-    if (task.project.createdById !== req.user.userId) {
+    const validAdmin = await ensureProjectOwnedByAdmin(task.projectId, req.user.userId);
+    if (!validAdmin) {
       return res.status(403).json({ error: 'Not allowed' });
     }
 

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const prisma = require('../config/prisma');
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -11,6 +12,16 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Ensure user still exists in the database
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId }
+    });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Session invalid. User account does not exist.' });
+    }
+
     req.user = decoded;
     next();
   } catch (error) {

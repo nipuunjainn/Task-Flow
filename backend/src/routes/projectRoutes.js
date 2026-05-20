@@ -55,7 +55,18 @@ router.get('/', verifyToken, async (req, res) => {
   try {
     const where =
       req.user.role === 'ADMIN'
-        ? { createdById: req.user.userId }
+        ? {
+            OR: [
+              { createdById: req.user.userId },
+              {
+                members: {
+                  some: {
+                    userId: req.user.userId,
+                  },
+                },
+              },
+            ],
+          }
         : {
             members: {
               some: {
@@ -140,7 +151,7 @@ router.put('/:id', verifyToken, authorizeRoles('ADMIN'), async (req, res) => {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    if (project.createdById !== req.user.userId) {
+    if (project.createdById !== req.user.userId && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'You can only edit projects you created' });
     }
 
@@ -177,7 +188,7 @@ router.delete('/:id', verifyToken, authorizeRoles('ADMIN'), async (req, res) => 
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    if (project.createdById !== req.user.userId) {
+    if (project.createdById !== req.user.userId && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'You can only delete projects you created' });
     }
 
@@ -208,7 +219,9 @@ router.post('/:id/members', verifyToken, authorizeRoles('ADMIN'), async (req, re
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    if (project.createdById !== req.user.userId) {
+    console.log('[ADD_MEMBER_DEBUG] project.createdById:', project.createdById, 'req.user.userId:', req.user.userId, 'req.user.role:', req.user.role);
+
+    if (project.createdById !== req.user.userId && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'You can only manage your own projects' });
     }
 
@@ -251,7 +264,7 @@ router.delete('/:id/members/:userId', verifyToken, authorizeRoles('ADMIN'), asyn
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    if (project.createdById !== req.user.userId) {
+    if (project.createdById !== req.user.userId && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'You can only manage your own projects' });
     }
 
