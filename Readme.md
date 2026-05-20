@@ -4,7 +4,7 @@ A modern, highly-polished full-stack task and workspace management application w
 
 ### 🌐 Live Deployment
 - **Frontend (Vercel)**: [https://task-flow-iota-seven.vercel.app](https://task-flow-iota-seven.vercel.app)
-- **Backend API (Railway)**: [https://task-flow-production-5991.up.railway.app](https://task-flow-production-5991.up.railway.app)
+- **Backend API (Railway)**: [https://task-flow-production-5991.up.railway.app]([https://task-flow-production-5991.up.railway.app](https://task-flow-production-5991.up.railway.app/api/health))
 
 ---
 
