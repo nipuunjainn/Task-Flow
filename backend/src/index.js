@@ -12,12 +12,22 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
-// ✅ SINGLE CLEAN CORS SETUP
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL,
-    "http://localhost:5173"
-  ],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL?.replace(/\/$/, ''), // Remove trailing slash if present
+      "http://localhost:5173",
+      "https://task-flow-iota-seven.vercel.app" // Hardcoded fallback just in case
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      console.log("Allowed origins:", allowedOrigins);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
