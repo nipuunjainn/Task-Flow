@@ -50,7 +50,15 @@ export default function Auth() {
       localStorage.setItem('user', JSON.stringify(res.data.user));
       navigate('/dashboard');
     } catch (err) {
-      setServerError(err.response?.data?.error || 'Something went wrong');
+      if (err.response) {
+        // Server responded with an error (4xx / 5xx)
+        setServerError(err.response.data?.error || 'Login failed. Please try again.');
+      } else if (err.request) {
+        // Request was made but no response received (backend down / network issue)
+        setServerError('Cannot reach the server. Please check your connection or try again later.');
+      } else {
+        setServerError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -65,7 +73,13 @@ export default function Auth() {
       localStorage.setItem('user', JSON.stringify(res.data.user));
       navigate('/dashboard');
     } catch (err) {
-      setServerError(err.response?.data?.error || 'Google sign-in failed');
+      if (err.response) {
+        setServerError(err.response.data?.error || 'Google sign-in failed.');
+      } else if (err.request) {
+        setServerError('Cannot reach the server. Please check your connection or try again later.');
+      } else {
+        setServerError('Google sign-in failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

@@ -18,7 +18,7 @@ app.use(cors({
       process.env.FRONTEND_URL?.replace(/\/$/, ''), // Remove trailing slash if present
       "http://localhost:5173",
       "https://task-flow-iota-seven.vercel.app" // Hardcoded fallback just in case
-    ];
+    ].filter(Boolean); // Remove undefined/null entries when env var is not set
     
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -49,7 +49,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
